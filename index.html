@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaky - Habit Tracker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #1e1e1e;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            width: 350px;
+            text-align: center;
+        }
+        h1 { color: #38bdf8; margin-bottom: 1.5rem; }
+        .habit-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #2a2a2a;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border-radius: 6px;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 0.5rem;
+            border: 1px solid #444;
+            background: #2a2a2a;
+            color: white;
+            border-radius: 6px;
+        }
+        button {
+            background: #38bdf8;
+            color: black;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { background: #0ea5e9; }
+        .checkbox-custom { width: 20px; height: 20px; cursor: pointer; }
+        #results { margin-top: 1.5rem; font-weight: bold; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⚡ Streaky</h1>
+    <p>Track your daily progress</p>
+
+    <div id="habit-list"></div>
+
+    <div style="margin-top: 1.5rem; display: flex; justify-content: space-between;">
+        <input type="text" id="new-habit-input" placeholder="New habit...">
+        <button onclick="addHabit()">Add</button>
+    </div>
+
+    <hr style="border: 0.5px solid #333; margin: 1.5rem 0;">
+    <button style="width: 100%;" onclick="calculateProgress()">Check Score</button>
+    <div id="results"></div>
+</div>
+
+<script>
+    let habits = ["Exercise", "Read 10 Pages", "Practice Python"];
+
+    function renderHabits() {
+        const listContainer = document.getElementById('habit-list');
+        listContainer.innerHTML = '';
+        habits.forEach((habit, index) => {
+            listContainer.innerHTML += `
+                <div class="habit-item">
+                    <span>${habit}</span>
+                    <input type="checkbox" class="checkbox-custom" id="habit-${index}">
+                </div>
+            `;
+        });
+    }
+
+    function addHabit() {
+        const input = document.getElementById('new-habit-input');
+        const value = input.value.trim();
+        if (value) {
+            if (habits.includes(value)) {
+                if (!confirm("Are you sure you want to add a duplicate?")) return;
+            }
+            habits.push(value);
+            input.value = '';
+            renderHabits();
+        }
+    }
+
+    function calculateProgress() {
+        let completedCount = 0;
+        habits.forEach((habit, index) => {
+            const checkbox = document.getElementById(`habit-${index}`);
+            if (checkbox && checkbox.checked) {
+                completedCount++;
+            }
+        });
+
+        const percentage = Math.round((completedCount / habits.length) * 100);
+        const resultsDiv = document.getElementById('results');
+
+        let message = `You completed ${percentage}% of your habits today.<br>`;
+        if (percentage === 100) {
+            message += "🏆 Perfect Day! 100% complete.";
+        } else if (percentage >= 50) {
+            message += "👍 Good job! You did more than half.";
+        } else {
+            message += "🌅 Tomorrow is a new chance!";
+        }
+        resultsDiv.innerHTML = message;
+    }
+
+    renderHabits();
+</script>
+
+</body>
+</html>
